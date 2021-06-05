@@ -1,0 +1,282 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Media Panel Settings</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        form {
+            border: 3px solid #f1f1f1;
+        }
+
+        control {
+            font-size: 100px;
+            height: 1.2em;
+            -webkit-appearance: none;
+        }
+
+        input[type=text], [type=password], [type=checkbox], select, option {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            border-radius: 10px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: groove;
+            cursor: pointer;
+            width: 100%;
+            border-radius: 10px;
+        }
+
+            button:hover {
+                opacity: 0.8;
+            }
+
+        hr {
+            border: 4px solid #87a8ea;
+            border-radius: 5px;
+        }
+
+        .imgcontainer {
+            text-align: center;
+            margin: 24px 0 12px 0;
+        }
+
+        .container {
+            padding: 16px;
+        }
+
+        .description {
+            color: gray;
+            font-size: smaller;
+            display: inline-block;
+            margin-left: 10px;
+        }
+
+        .heading {
+            transform: translate(50%,-50%);
+            font-family: verdana;
+            font-size: 30px;
+            font-weight: 700;
+            color: #ddd920;
+            text-shadow: 1px 1px 1px #4CAF50, 1px 2px 1px #919191, 1px 3px 1px #919191, 1px 4px 1px #919191, 1px 5px 1px #919191, 1px 6px 1px #919191, 1px 7px 1px #919191, 1px 8px 1px #919191, 1px 9px 1px #919191, 1px 10px 1px #919191, 1px 18px 6px rgba(16,16,16,0.4), 1px 22px 10px rgba(16,16,16,0.2), 1px 25px 35px rgba(16,16,16,0.2), 1px 30px 60px rgba(16,16,16,0.4);
+        }
+
+        .headingdiv {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+
+    <script>
+
+        // On load
+        document.addEventListener('DOMContentLoaded', function () {
+            // Populate template with default values (dynamic yet static...)
+            addSelectKeys(document.getElementById("key_426144"));
+            addSelectModifiers(document.getElementById("modifier1_426144"));
+            addSelectModifiers(document.getElementById("modifier2_426144"));
+            addSelectMedia(document.getElementById("media_426144"));
+
+            // Add buttons
+            for (let index = 1; index < 8 + 1; index++) {
+                addButton(index);
+            }
+
+            // Set buttons intial state to "Please Select" or "None"
+            for (let index = 1; index < 8 + 1; index++) {
+                clearSelection(index);
+            }
+        }, false);
+
+        /**
+         * Adds options to a select object by a given dict in the { "Name": "Value" } format
+         * @param select
+         * @param dictionary
+         */
+        function addOptionsToSelectByDictionary(select, dictionary) {
+            for (key in dictionary) {
+                let option = document.createElement("option");
+                option.text = key;
+                option.value = dictionary[key];
+                select.add(option);
+            };
+        }
+
+        /**
+         * Adds select options (data) for a keys select element
+         * @param select Select object to populate
+         */
+        function addSelectKeys(select) {            
+            let keys = {
+                "Please Select": -1, "Up Arrow": 0xda, "Down Arrow": 0xd9, "Left Arrow": 0xd8, "Right Arrow": 0xd7, "Backspace": 0xb2, "Tab": 0xb3, "Return": 0xb0,
+                "Esc": 0xb1, "Insert": 0xd1, "Delete": 0xd4, "Page Up": 0xd3, "Page Down": 0xd6, "Home": 0xd2, "End": 0xd5, "CapsLock": 0xc1 };
+
+            // Add Fx dynamically
+            for (let index = 1; index < 12 + 1; index++) {
+                keys["F" + index.toString()] = 0xc2 + index;
+            }
+
+            // Add characters dynamically
+            for (let index = 0; index < ('Z'.charCodeAt(0) - 'A'.charCodeAt(0)) + 1; index++) {
+                keys[String.fromCharCode(index + 'A'.charCodeAt(0))] = 0xc2 + index + 'A'.charCodeAt(0);
+            }
+            // Add numbers dynamically
+            for (let index = 0; index < 9 + 1; index++) {
+                keys[index.toString()] = index;
+            }
+
+            addOptionsToSelectByDictionary(select, keys);
+        }
+
+        /**
+         * Adds select options (data) for a modifiers select element
+         * @param select Select object to populate
+         */
+        function addSelectModifiers(select) {
+            let modifiers = { "None": -1, "Left Ctrl": 0x80, "Left Shift": 0x81, "Left Alt": 0x82, "Left Gui": 0x83, "Righ Ctrl": 0x84, "Right Shift": 0x85, "Right Alt": 0x86, "Right Gui": 0x87 };
+
+            addOptionsToSelectByDictionary(select, modifiers)
+        }
+
+        /**
+         * Adds select options (data) for a media select element
+         * @param select Select object to populate
+         */
+        function addSelectMedia(select) {
+            let media = {
+                "Please Select": [0, 0], "Next Track": [1, 0], "Previous Track": [2, 0], "Stop": [4, 0], "Play/Pause": [8, 0], "Mute": [16, 0], "Volume Up": [32, 0], "Volume Down": [64, 0], "Home": [128, 0], "Explorer": [0, 1], "Calculator": [0, 2],
+                "Browser Bookmarks": [0, 4], "Browser Search": [0, 8], "Browser Stop": [0, 16], "Browser Back": [0, 32], "Media Selection": [0, 64], "Email Reader": [0, 128]
+            };
+
+            addOptionsToSelectByDictionary(select, media)
+        }
+
+        /**
+         * Adds a button to screen by copying the hidden template
+         * @param number Button number (will affect title and returned id/name)
+         */
+        function addButton(number) {
+            let item = document.getElementById("button_template");
+            let cloned = item.cloneNode(true);
+            // renname the cloned to allow getting the template in the future (otherwise it would ,ight catch this cloned version)
+            cloned.id += "_" + number.toString();
+            // Change header text to resamble the button number
+            let heading = cloned.querySelector('span[id$="_426144"]');
+            heading.innerText = "Button " + number.toString();
+            // Change all names to be unique, by given index
+            let renamable_doms = cloned.querySelectorAll('[id$="_426144"]');
+            renamable_doms.forEach(function (entry) {
+                entry.id = entry.id.replace("426144", number.toString());
+            });
+            // Change everything that uses the magic number in new DOM (could have used this alone - better debugging though)\
+            cloned.innerHTML = cloned.innerHTML.replaceAll("426144", number.toString());
+
+            // button_template is obviously hidden, make the newly created DOM visible.
+            cloned.style.display = "inherit";
+            document.getElementById("buttons").appendChild(cloned);
+        }
+
+        /**
+         * Disables/Enables a group pf DOM elements
+         * @param enable DOM elements to enable
+         * @param disable DOM elements to disable
+         */
+        function setMode(enable, disable) {
+            enable.forEach(function (entry) {
+                document.getElementById(entry).disabled = false;
+            });
+            disable.forEach(function (entry) {
+                document.getElementById(entry).disabled = true;
+            });
+        }
+
+        /**
+         * Clears all user selection (on save will not save button data)
+         * @param number Button number, to allow DOM searching by name.
+         */
+        function clearSelection(number) {
+            let key = document.querySelector('[id$="key_' + number + '"]');
+            key.selectedIndex = "10";
+            key.disabled = false;
+            let modifier1 = document.querySelector('[id$="modifier1_' + number + '"]');
+            modifier1.selectedIndex = 0;
+            modifier1.disabled = false;
+            let modifier2 = document.querySelector('[id$="modifier2_' + number + '"]');
+            modifier2.selectedIndex = 0;
+            modifier2.disabled = false;
+            let media = document.querySelector('[id$="media_' + number + '"]');
+            media.text = "Please Select";
+            media.disabled = false;
+        }
+
+    </script>
+
+</head>
+<body>
+    <div class="imgcontainer">
+        <img src="data:image/jpeg;base64,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"
+             alt="Logo" />
+    </div>
+    <hr />
+
+    <form action="/" method="GET">
+
+        <div id="buttons" name="buttons">
+
+        </div>
+        <button type="submit">Save</button>
+    </form>
+
+    <div class="container" id="button_template" style="display: none">
+        <div class="headingdiv"><span id="button_426144" class="heading">Button</span></div>
+        <table>
+            <tr>
+                <th style="width: 10%"><b>Key</b></th>
+                <th>
+                    <select id="key_426144" onchange="setMode(['key_426144', 'modifier1_426144', 'modifier2_426144'], ['media_426144'])">
+                    </select>
+                </th>
+                <th rowspan="4" style="width: 10%">
+                    <img src="data:image/png;base64,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"
+                         alt="Remove" onclick="clearSelection(parseInt(this.parentNode.parentNode.parentNode.parentNode.parentNode.id.replace('button_template_', '')));" />
+                </th>
+            </tr>
+            <tr>
+                <th><b>Modifier 1</b></th>
+                <th>
+                    <select id="modifier1_426144" onchange="setMode(['key_426144', 'modifier1_426144', 'modifier2_426144'], ['media_426144'])">
+                    </select>
+                </th>
+            </tr>
+            <tr>
+                <th><b>Modifier 2</b></th>
+                <th>
+                    <select id="modifier2_426144" onchange="setMode(['key_426144', 'modifier1_426144', 'modifier2_426144'], ['media_426144'])">
+                    </select>
+                </th>
+            </tr>
+            <tr>
+                <th><b>Media</b></th>
+                <th>
+                    <select id="media_426144" onchange="setMode(['media_426144'], ['key_426144', 'modifier1_426144', 'modifier2_426144'])">
+                    </select>
+                </th>
+            </tr>
+        </table>
+        <hr />
+    </div>
+</body>
+</html>
